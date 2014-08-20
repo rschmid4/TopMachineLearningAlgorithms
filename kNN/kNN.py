@@ -1,10 +1,11 @@
 """
 @author: Jia Shi, j5shi@live.com
 
-@version: 0.1
+@version: 0.2
 
 @revision history:
     - 2014-08-06 2:02:36 PM, file created.
+    - 2014-08-20 4:38:16 PM, add normalization option to training set.
 
 @reference:
 
@@ -114,7 +115,8 @@ class kNN(object):
         @return              "label": the determined label of the class into which
                                       the vec_to_classify to be cataloged.
         """
-        vec_to_classify = self.__normalize_vector(vec_to_classify)
+        if self.normalize is True:
+            vec_to_classify = self.__normalize_vector(vec_to_classify)
         
         # if k == 1, then skip the majority vote and return the nearest neighbor
         if self.k == 1:
@@ -141,7 +143,7 @@ class kNN(object):
             return sorted(class_count.iteritems(), key=lambda item: item[1], reverse=True)[0][0]
 
 if __name__ == "__main__":
-    if 1:
+    if 0:
         label = {1: 'a',
                  2: 'b',
                  3: 'c',
@@ -151,11 +153,11 @@ if __name__ == "__main__":
 
         knn = kNN(2, [[2, 2, 8, 1], [1, 7, 1, 2], [3, 3, 3, 3]])
 
-        test_vec = [6, 1, 4, 0]
-        # set 0 to the label, since its unknow
+        test_vec = numpy.array([6, 1, 4, 0], dtype='f4')
+        # set whatever number to the label (last column), since its unknown
         print knn.get_k_nearest_neighbors(test_vec)
         print label.get(knn.classify(test_vec))
-    if 0:
+    if 1:
         const = 20
         label = {1: "largeDoses",
                  2: "smallDoses",
@@ -174,9 +176,8 @@ if __name__ == "__main__":
         test_set = training_set[-const:].view('f4').reshape(const, -1)
 
         knn = kNN(5, training_set)
+        knn1 = kNN(5, training_set, False)
+
+        # test of the kNN algorithm and the comparison of normalized and unnormalized training set
         for test_vec in test_set:
-            print label.get(knn.classify(test_vec), "unknown"), label.get(test_vec[-1])
-
-
-            
-            
+            print label.get(knn.classify(test_vec), "unknown"), label.get(knn1.classify(test_vec), "unknown"), label.get(test_vec[-1])
