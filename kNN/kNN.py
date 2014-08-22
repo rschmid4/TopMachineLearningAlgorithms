@@ -14,6 +14,7 @@
 """
 import numpy
 
+
 class kNN(object):
 
     """
@@ -22,37 +23,34 @@ class kNN(object):
 
     def __init__(self, k, training_set, normalize=True):
         """
-        @k                <int>: the number of nearest neighbors, must be positive.
-        @training_set <ndarray>: the training set should be a 2D array, and the last column must
-                                 be the label.
-        @label        <ndarray>: the label of the training set, will be convert to numpy.ndarray.
+        @k                <int>: the number of nearest neighbors, must be a positive integer.
+        @training_set <ndarray>: the training set should be a 2D array of floats, and
+                                 the last column must be the label.
         @normalize      boolean: if true, all training sets will be normalized.
         """
-        # in case the training_set is not ndarray type, convert it to ndarray
-        if isinstance(training_set, numpy.ndarray):
-            self.training_set = training_set
+        if not isinstance(training_set, numpy.ndarray):
+            raise TypeError("training set should be numpy array type.")
         else:
-            self.training_set = numpy.array(training_set, dtype='f4')
+            self.training_set = training_set
 
         # in case the training set is structured array, convert to normal array
+        # and we assume it contains floating numbers only.
         if len(self.training_set.shape) == 1:
             self.training_set = self.training_set.view('f4').reshape(self.training_set.shape[0], -1)
-        
+
         self.k = k
         self.normalize = normalize
 
     def __setattr__(self, name, value):
-        if name == 'k':
-            if value < 0 or value > self.training_set.shape[0]:
-                raise ValueError("k should be an integer and in range [1, %s]" % self.training_set.shape[0])
+        if name == 'k' and (value < 0 or value > self.training_set.shape[0]):
+            raise ValueError("k out of range.")
         if name == 'normalize' and value is True:
             self.training_set = self.normalize_training_set(self.training_set)
         object.__setattr__(self, name, value)
-    
 
     def normalize_training_set(self, data_set):
         """ normalize the given data set.
-        
+
         @data_set <ndarray>: the data set to be normalized.
         """
         min_value_set = data_set.min(axis=0)
@@ -68,12 +66,12 @@ class kNN(object):
 
         augment = lambda vector: numpy.tile(vector, (data_set.shape[0], 1))
         data_set_norm = (data_set - augment(min_value_set)) / augment(ranges)
-       
+
         return data_set_norm
 
     def __normalize_vector(self, vector):
         """normalize a single training vector
-        
+
         @vector <ndarray>: a single training vector
         """
 
@@ -117,14 +115,13 @@ class kNN(object):
         """
         if self.normalize is True:
             vec_to_classify = self.__normalize_vector(vec_to_classify)
-        
+
         # if k == 1, then skip the majority vote and return the nearest neighbor
         if self.k == 1:
             return self.get_k_nearest_neighbors(vec_to_classify)[0][0][-1]
         # do the distance weighted majority vote
         else:
             k_neighbors = self.get_k_nearest_neighbors(vec_to_classify)
-
 
             # weighting
             distance_max = k_neighbors[-1][1]
@@ -149,7 +146,7 @@ if __name__ == "__main__":
                  3: 'c',
                  'a': 1,
                  'b': 2,
-                 'c': 3 }
+                 'c': 3}
 
         knn = kNN(2, [[2, 2, 8, 1], [1, 7, 1, 2], [3, 3, 3, 3]])
 
@@ -167,11 +164,11 @@ if __name__ == "__main__":
                  "didntLike": 3}
 
         training_set = numpy.genfromtxt(
-                "training_set.txt", 
-                dtype=[('f1', 'f4'), ('f2', 'f4'), ('f3', 'f4'), ('label', 'f4')], 
-                comments='#', 
-                usecols=(0, 1, 2, 3), 
-                converters={3: lambda x: label[x.strip()]})
+            "training_set.txt",
+            dtype=[('f1', 'f4'), ('f2', 'f4'), ('f3', 'f4'), ('label', 'f4')],
+            comments='#',
+            usecols=(0, 1, 2, 3),
+            converters={3: lambda x: label[x.strip()]})
 
         test_set = training_set[-const:].view('f4').reshape(const, -1)
 
