@@ -1,4 +1,5 @@
-import sys;sys.path.append("..")
+import sys
+sys.path.append("..")
 import kNN
 import numpy
 import os
@@ -21,15 +22,13 @@ def img_to_vector(img_fn, label=0):
 
 if __name__ == "__main__":
     training_set_files = os.listdir(r"./trainingDigits")
-    
+
     # initiate a matrix, don't forget to allocate the space for the label
     training_set = numpy.zeros((len(training_set_files), 1025))
 
     for i in xrange(len(training_set_files)):
         training_set[i, :] = img_to_vector(r"./trainingDigits/" + training_set_files[i], training_set_files[i].split('_')[0])
-        
-    knn = kNN.kNN(1, training_set, False)
+
+    knn = kNN.kNN(2, training_set, False)
     for fn in os.listdir(r"./testDigits"):
         print knn.classify(img_to_vector(r"./testDigits/%s" % fn)), ", correct number is %s" % fn.split('_')[0]
-
-

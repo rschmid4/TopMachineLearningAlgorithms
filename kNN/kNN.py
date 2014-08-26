@@ -1,4 +1,4 @@
-
+#-*- coding: utf-8 -*
 """
 @author: Jia Shi, j5shi@live.com
 
@@ -86,7 +86,7 @@ class kNN(object):
         @vec1 <ndarray>: a list of integers.
         """
         # skip the calculate of distances of labels
-        return sum([(a - b) ** 2 for a, b in zip(vec0[:-1], vec1[:-1])]) ** 0.5
+        return numpy.linalg.norm(vec0[:-1] - vec1[:-1])
 
     def get_label(self, vector):
         """Return the label of a vector.
@@ -128,14 +128,16 @@ class kNN(object):
         else:
             k_neighbors = self.get_k_nearest_neighbors(vec_to_classify)
 
-            # weighting
+            # distance-weighted rule
             distance_max = k_neighbors[-1][1]
             distance_min = k_neighbors[0][1]
             distance_delta = distance_max - distance_min
+
             if distance_delta == 0:
-                raise Exception("unable to break the tie of same distances!")
-            else:
-                k_neighbors = [(neighbor[0], (distance_max - neighbor[1]) / distance_delta) for neighbor in k_neighbors]
+                distance_delta = 1
+
+            # the weight decreases with increasing sample-to-distance distance
+            k_neighbors = [(neighbor[0], (distance_max - neighbor[1]) / distance_delta) for neighbor in k_neighbors]
 
             # voting
             class_count = {}
