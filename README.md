@@ -7,6 +7,9 @@ Top-Machine-Learning-Algorithms
   and a handwriting recognition script based on kNN algorithm is implemented for practicing.
 
 
+Decision-Tree
+===============================
+
 Note
 ============
 

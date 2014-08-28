@@ -2,12 +2,12 @@
 """
 @author: Jia Shi, j5shi@live.com
 
-@version: 0.2
+@version: 0.2.0
 
 @revision history:
-    - 2014-08-06 2:02:36 PM, file created.
-    - 2014-08-20 4:38:16 PM, add normalization option to training set.
-    - 2014-08-25 3:14:38 PM, fixed some small bugs and unified some interfaces.
+    - 2014-08-06 2:02:36 PM, Jia Shi, file created.
+    - 2014-08-20 4:38:16 PM, Jia Shi, add normalization option to training set.
+    - 2014-08-25 3:14:38 PM, Jia Shi, fixed some small bugs and unified some interfaces.
 
 @reference:
 
