@@ -41,13 +41,14 @@ class kNN(object):
     def __setattr__(self, name, value):
         if name == 'k' and (value < 0 or value > self.training_set.shape[0]):
             raise ValueError("k out of range.")
+
         if name == 'normalize' and value is True:
             self.training_set = self.normalize_training_set(self.training_set)
 
         object.__setattr__(self, name, value)
 
     def normalize_training_set(self, training_set):
-        """Normalize the given data set.
+        """Normalize the given training set.
 
         @training_set <ndarray>: the training set to be normalized.
         """
@@ -139,6 +140,8 @@ class kNN(object):
             # the weight decreases with increasing sample-to-distance distance
             k_neighbors = [(neighbor[0], (distance_max - neighbor[1]) / distance_delta) for neighbor in k_neighbors]
 
+            print k_neighbors
+
             # voting
             class_count = {}
             for label, weight in [(self.get_label(neighbor[0]), neighbor[1]) for neighbor in k_neighbors]:
@@ -156,13 +159,13 @@ if __name__ == "__main__":
                  'b': 2,
                  'c': 3}
 
-        knn = kNN(2, numpy.array([[2, 2, 8, 1], [1, 7, 1, 2], [3, 3, 3, 3]], dtype="f4"))
+        knn = kNN(2, numpy.array([[2, 2, 8, 1], [1, 7, 1, 2], [3, 3, 3, 3]], dtype="f4"), False)
 
         test_vec = numpy.array([2, 8, 2, 0], dtype='f4')
         # set whatever number to the label (last column), since its unknown
         print knn.get_k_nearest_neighbors(test_vec)
         print label.get(knn.classify(test_vec))
-    if 1:
+    if 0:
         const = 20
         label = {1: "largeDoses",
                  2: "smallDoses",

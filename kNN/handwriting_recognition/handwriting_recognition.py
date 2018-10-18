@@ -24,11 +24,15 @@ if __name__ == "__main__":
     training_set_files = os.listdir(r"./trainingDigits")
 
     # initiate a matrix, don't forget to allocate the space for the label
-    training_set = numpy.zeros((len(training_set_files), 1025))
+    # 32 row x 32 col + label
+    training_set = numpy.zeros((len(training_set_files), 32*32+1))
 
     for i in xrange(len(training_set_files)):
-        training_set[i, :] = img_to_vector(r"./trainingDigits/" + training_set_files[i], training_set_files[i].split('_')[0])
+        # e.g. with filename 0_1.txt label is 0
+        image_file = r"./trainingDigits/" + training_set_files[i]
+        label = training_set_files[i].split('_')[0]
+        training_set[i, :] = img_to_vector(image_file, label)
 
-    knn = kNN.kNN(2, training_set, False)
+    knn = kNN.kNN(3, training_set, False)
     for fn in os.listdir(r"./testDigits"):
         print knn.classify(img_to_vector(r"./testDigits/%s" % fn)), ", correct number is %s" % fn.split('_')[0]
